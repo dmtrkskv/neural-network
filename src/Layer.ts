@@ -5,6 +5,7 @@ export interface ILayer {
     outputs: number[];
   
     activate(inputs: number[]): void;
+    propogate(childrenDeltas: number): void;
   }
 
 export class Layer implements ILayer {
@@ -23,6 +24,16 @@ export class Layer implements ILayer {
       this.neurons.forEach(neuron => {
         neuron.activate(previousLayerOutputs);
       });
+    }
+
+    public propogate(childrenDeltas: number) : void {
+      this.neurons.forEach(neuron => {
+        neuron.calculateDelta(childrenDeltas);
+      });
+    }
+
+    public calculateChildrenDeltas() {
+      
     }
   
     public get outputs(): number[] {

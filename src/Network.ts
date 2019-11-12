@@ -29,7 +29,12 @@ export class Network implements INetwork {
     }
   }
 
-  public propogate(target: number[], learningRate: number) {}
+  public propogate(target: number[], learningRate: number) {
+    for (let i = this.layers.length - 2; i > 0; i--) {
+      const nextLayerDeltasSum = 
+      this.layers[i].propogate(this.layers[i + 1].childenDeltas);
+    }
+  }
 
   public get outputs() {
     return this.outputLayer.outputs;

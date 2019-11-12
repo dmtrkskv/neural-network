@@ -55,6 +55,10 @@ export interface INeuron {
       this.biasWeight = this.randomNumber;
     }
 
+    private calculateDelta(childrenDeltas: number) : void {
+      this.delta = squash.SIGMOID(this.sum, true) * childrenDeltas;
+    }
+
     private get randomNumber() : number {
       return -1 + Math.random() * 2;
     }
