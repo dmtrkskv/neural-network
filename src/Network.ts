@@ -1,4 +1,4 @@
-import { ILayer, Layer } from "./Layer";
+import { ILayer, Layer, InputLayer } from "./Layer";
 
 export interface INetwork {
   activate(inputs: number[]): void;
@@ -6,11 +6,10 @@ export interface INetwork {
 }
 
 export class Network implements INetwork {
-  private receptorsNumber: number;
   private layers: ILayer[] = [];
 
   constructor(layersSizes: number[]) {
-    this.receptorsNumber = layersSizes[0];
+    this.layers.push(new InputLayer(layersSizes[0]))
 
     for (let i = 1; i < layersSizes.length; i++) {
       const previousLayerSize = layersSizes[i - 1];
@@ -21,17 +20,13 @@ export class Network implements INetwork {
   }
 
   public activate(networkInputs: number[]) {
-    if (networkInputs.length !== this.receptorsNumber) {
-      throw new Error("Число входов нейросети должно равняться числу рецепторов");
+    this.layers[0].activate(networkInputs);    
+
+    for (let i = 1; i < this.layers.length; i++) {
+      const previousLayerOutputs = this.layers[i - 1].outputs;
+
+      this.layers[i].activate(previousLayerOutputs);
     }
-
-    let previousLayerOutputs = networkInputs;
-
-    this.layers.forEach(layer => {
-      layer.activate(previousLayerOutputs);
-
-      previousLayerOutputs = layer.outputs;
-    });
   }
 
   public propogate(target: number[], learningRate: number) {}

@@ -1,10 +1,5 @@
 import { INeuron, Neuron } from "./Neuron";
 
-/**
- * Входной слой - это особенный слой, который и слоем можно не считать.
- * Это рецепторы. 
- */
-
 export interface ILayer {
     neurons: INeuron[];
     outputs: number[];
@@ -32,6 +27,23 @@ export class Layer implements ILayer {
   
     public get outputs(): number[] {
       return this.neurons.map(neuron => neuron.output);
+    }
+  }
+
+  export class InputLayer extends Layer {
+    constructor(neuronsNumber: number) {        
+      super(neuronsNumber, 1);
+    }
+  
+    public activate(networkInputs: number[]): void {
+      if (networkInputs.length !== this.neurons.length) {
+        throw new Error("Число входов в сеть не соответствует формату обучающих данных")
+      }
+      for (let i = 0; i < networkInputs.length; i++) {
+        const input = networkInputs[i];
+        
+        this.neurons[i].activate([input]);
+      }
     }
   }
   
