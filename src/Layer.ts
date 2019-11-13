@@ -5,7 +5,9 @@ export interface ILayer {
     outputs: number[];
   
     activate(inputs: number[]): void;
-    propogate(childrenDeltas: number): void;
+    updateDeltas(gradientsForNeurons: number[]): void;
+    getGradientForInputNeuron(inputNeuronIndex: number) : number;
+    getGradientsForInputNeurons(inputNeuronsNumber: number) : number[];
   }
 
 export class Layer implements ILayer {
@@ -26,20 +28,39 @@ export class Layer implements ILayer {
       });
     }
 
-    public propogate(childrenDeltas: number) : void {
-      this.neurons.forEach(neuron => {
-        neuron.calculateDelta(childrenDeltas);
+    public updateDeltas(gradientsForNeurons: number[]) : void {
+      this.neurons.forEach((neuron, neuronOutputIndex) => {
+        neuron.updateDelta(gradientsForNeurons[neuronOutputIndex]);
       });
     }
+   
+    public getGradientsForInputNeurons(inputNeuronsNumber: number): number[] {    
+      const gradients: number[] = [];
 
-    public calculateChildrenDeltas() {
-      
+      for (let i = 0; i < inputNeuronsNumber; i++) {
+          gradients.push(this.getGradientForInputNeuron(i))
+      }
+
+      return gradients;
+    }
+
+    /**
+     * Предполагается, что у каждого нейрона порядок весов соответствует порядку нейронов в предыдущем слое.
+     * В перспективе, в неполносвязной модели, каждый нейрон будет иметь 
+     * таблицу индексов входящих в него нейронов.
+     */
+    public getGradientForInputNeuron(inputNeuronIndex: number) : number {
+      return this.neurons.reduce((accum, neuron): number => {
+        return accum + neuron.getGradientByInputIndex(inputNeuronIndex);
+      }, 0);
     }
   
     public get outputs(): number[] {
       return this.neurons.map(neuron => neuron.output);
     }
   }
+
+  // todo: добавить HiddenLayer, в который перенести некоторые методы из Layer
 
   export class InputLayer extends Layer {
     constructor(neuronsNumber: number) {        
@@ -55,6 +76,15 @@ export class Layer implements ILayer {
         
         this.neurons[i].activate([input]);
       }
+    }
+  }
+
+  export class OutputLayer extends Layer {
+    public updateDeltas(gradients: number[]) : void {
+      this.neurons.forEach((neuron, neuronOutputIndex) => {
+
+        neuron.updateDelta(gradients[neuronOutputIndex]);
+      });
     }
   }
   

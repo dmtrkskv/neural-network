@@ -1,8 +1,11 @@
 export interface INeuron {
     sum: number;
     output: number;
+    delta: number;
   
     activate(inputs: number[]): void;
+    updateDelta(gradient: number): void;
+    getGradientByInputIndex(index: number) : number;
   }
 
  const squash = {
@@ -13,6 +16,7 @@ export interface INeuron {
   };
   
   export class Neuron implements INeuron {
+    // todo: возможно стоит переделать часть свойств в get, чтобы в них нельзя было писать
     public output: number = 0;
     public delta: number = 0;
     public sum: number = 0;
@@ -28,6 +32,18 @@ export interface INeuron {
       this.summarize(inputs);
       this.output = squash.SIGMOID(this.sum);
     }
+
+    public getGradientByInputIndex(index: number) : number {
+      if (index >= this.weights.length) {
+        throw new Error("Попытка обратиться к несуществующей связи");
+      }
+
+      return this.delta * this.weights[index];
+    }
+
+    public updateDelta(gradient: number) : void {
+      this.delta = squash.SIGMOID(this.sum, true) * gradient;
+    }
   
     private summarize(inputs: number[]): void {
       if (this.weights.length !== inputs.length) {
@@ -36,13 +52,9 @@ export interface INeuron {
         );
       }
 
-      this.sum = 0;      
-
-      inputs.forEach((input, index) => {
-        this.sum += input * this.weights[index];
-      });
-
-      this.sum += this.biasWeight;
+      this.sum = inputs.reduce((accum, input, index): number => {
+        return accum + input * this.weights[index];
+      }, this.biasWeight)
     }
   
     private initializeWeights(weightsNumber: number) {   
@@ -53,11 +65,7 @@ export interface INeuron {
       }
 
       this.biasWeight = this.randomNumber;
-    }
-
-    private calculateDelta(childrenDeltas: number) : void {
-      this.delta = squash.SIGMOID(this.sum, true) * childrenDeltas;
-    }
+    }    
 
     private get randomNumber() : number {
       return -1 + Math.random() * 2;
