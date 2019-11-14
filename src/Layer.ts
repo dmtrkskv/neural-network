@@ -6,6 +6,7 @@ export interface ILayer {
   
     activate(inputs: number[]): void;
     updateDeltas(gradientsForNeurons: number[]): void;
+    updateWeights(learningRate: number): void;
     getGradientForInputNeuron(inputNeuronIndex: number) : number;
     getGradientsForInputNeurons(inputNeuronsNumber: number) : number[];
   }
@@ -32,6 +33,10 @@ export class Layer implements ILayer {
       this.neurons.forEach((neuron, neuronOutputIndex) => {
         neuron.updateDelta(gradientsForNeurons[neuronOutputIndex]);
       });
+    }
+
+    public updateWeights(learningRate: number): void {
+      this.neurons.forEach(neuron => neuron.updateWeights(learningRate));
     }
    
     public getGradientsForInputNeurons(inputNeuronsNumber: number): number[] {    
@@ -80,11 +85,6 @@ export class Layer implements ILayer {
   }
 
   export class OutputLayer extends Layer {
-    public updateDeltas(gradients: number[]) : void {
-      this.neurons.forEach((neuron, neuronOutputIndex) => {
-
-        neuron.updateDelta(gradients[neuronOutputIndex]);
-      });
-    }
+   
   }
   

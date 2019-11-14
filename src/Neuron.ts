@@ -1,10 +1,9 @@
 export interface INeuron {
-    sum: number;
     output: number;
-    delta: number;
   
     activate(inputs: number[]): void;
     updateDelta(gradient: number): void;
+    updateWeights(learningRate: number): void;
     getGradientByInputIndex(index: number) : number;
   }
 
@@ -16,21 +15,35 @@ export interface INeuron {
   };
   
   export class Neuron implements INeuron {
-    // todo: возможно стоит переделать часть свойств в get, чтобы в них нельзя было писать
     public output: number = 0;
-    public delta: number = 0;
-    public sum: number = 0;
-    public weights: number[] = [];
 
+    private savedInputs: number[] = [];
+
+    private weights: number[] = [];
     private biasWeight: number = 0;
+    private sum: number = 0;
+
+    private delta: number = 0;
   
     constructor(inputsNumber: number) {
       this.initializeWeights(inputsNumber);
     }
   
     public activate(inputs: number[]): void {
+      this.savedInputs = inputs;
+
       this.summarize(inputs);
       this.output = squash.SIGMOID(this.sum);
+    }   
+    
+    public updateDelta(gradient: number) : void {
+      this.delta = squash.SIGMOID(this.sum, true) * gradient;
+    }
+
+    public updateWeights(learningRate: number): void {
+      this.weights = this.weights.map((weight, index) => {
+        return weight + learningRate * this.delta * this.savedInputs[index] ;
+      });
     }
 
     public getGradientByInputIndex(index: number) : number {
@@ -39,11 +52,7 @@ export interface INeuron {
       }
 
       return this.delta * this.weights[index];
-    }
-
-    public updateDelta(gradient: number) : void {
-      this.delta = squash.SIGMOID(this.sum, true) * gradient;
-    }
+    }  
   
     private summarize(inputs: number[]): void {
       if (this.weights.length !== inputs.length) {
@@ -68,7 +77,8 @@ export interface INeuron {
     }    
 
     private get randomNumber() : number {
-      return -1 + Math.random() * 2;
+      // return -1 + Math.random() * 2;
+      return 0;
     }
   }
   

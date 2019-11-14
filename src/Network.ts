@@ -43,6 +43,14 @@ export class Network implements INetwork {
     
       currentLayer.updateDeltas(gradientsForNeurons);
     }
+
+    this.layers.forEach(layer => {
+      layer.updateWeights(learningRate);
+    })
+  }
+
+  public getLayer(index: number) : ILayer {
+    return this.layers[index];
   }
 
   public get outputs() {
