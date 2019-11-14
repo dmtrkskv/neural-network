@@ -42,7 +42,7 @@ export interface INeuron {
 
     public updateWeights(learningRate: number): void {
       this.weights = this.weights.map((weight, index) => {
-        return weight + learningRate * this.delta * this.savedInputs[index] ;
+        return weight - learningRate * this.delta * this.savedInputs[index];
       });
     }
 

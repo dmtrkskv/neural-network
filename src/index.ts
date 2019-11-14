@@ -4,7 +4,7 @@ const network = new Network([2, 2, 1]);
 
 const learningRate = .3;
 
-for (let i = 0; i < 20_000; i++) {
+for (let i = 0; i < 2000; i++) {
   network.activate([1, 1]);
   network.propogate([0], learningRate); 
   

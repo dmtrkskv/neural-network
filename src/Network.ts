@@ -32,7 +32,7 @@ export class Network implements INetwork {
   }
 
   public propogate(targetValues: number[], learningRate: number) {
-    const errors = targetValues.map((targetValue, index) => targetValue - this.outputs[index]);
+    const errors = targetValues.map((targetValue, index) => this.outputs[index] - targetValue);
     this.outputLayer.updateDeltas(errors);
 
     for (let i = this.layers.length - 2; i >= 0; i--) {
@@ -40,7 +40,7 @@ export class Network implements INetwork {
       const nextLayer = this.layers[i + 1];
 
       const gradientsForNeurons: number[] = nextLayer.getGradientsForInputNeurons(currentLayer.neurons.length);  
-    
+     
       currentLayer.updateDeltas(gradientsForNeurons);
     }
 

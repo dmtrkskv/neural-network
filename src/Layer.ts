@@ -39,6 +39,9 @@ export class Layer implements ILayer {
       this.neurons.forEach(neuron => neuron.updateWeights(learningRate));
     }
    
+    /**
+     * Возвращает градиенты для нейронов, влияющих на данный слой в виде массива.
+     */
     public getGradientsForInputNeurons(inputNeuronsNumber: number): number[] {    
       const gradients: number[] = [];
 
