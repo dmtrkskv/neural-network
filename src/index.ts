@@ -2,30 +2,19 @@ import { Network } from "./Network";
 
 const network = new Network([2, 2, 1]);
 
-const learningRate = .3;
+const dataSets = [
+  {inputs: [1, 1], outputs: [0]},
+  {inputs: [0, 0], outputs: [0]},
+  {inputs: [1, 0], outputs: [1]},
+  {inputs: [0, 1], outputs: [1]},
+];
 
-for (let i = 0; i < 2000; i++) {
-  network.activate([1, 1]);
-  network.propogate([0], learningRate); 
-  
-  network.activate([0, 0]);
-  network.propogate([0], learningRate);
-  
-  network.activate([1, 0]);
-  network.propogate([1], learningRate);
-  
-  network.activate([0, 1]);
-  network.propogate([1], learningRate);
-}
+const learningRate = .7;
+const epochsNumber = 10000;
 
-network.activate([1, 1]);
-console.log('1, 1 -> ' + network.outputs);
+network.train(dataSets, learningRate, epochsNumber);
 
-network.activate([0, 0]);
-console.log('0, 0 -> ' + network.outputs);
-
-network.activate([1, 0]);
-console.log('1, 0 -> ' + network.outputs);
-
-network.activate([0, 1]);
-console.log('0, 1 -> ' + network.outputs);
+dataSets.forEach(dataSet => {
+  network.activate(dataSet.inputs);
+  console.log(`${dataSet.inputs.toString()} -> ${network.outputs.toString()}`);
+});

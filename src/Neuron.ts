@@ -13,6 +13,10 @@ export interface INeuron {
       return isDerivate ? fx * (1 - fx) : fx;
     }
   };
+
+  function randomDouble(min: number, max: number) : number {
+    return min + (max - min) * Math.random();
+  }
   
   export class Neuron implements INeuron {
     public output: number = 0;
@@ -73,12 +77,11 @@ export interface INeuron {
         this.weights[i] = this.randomNumber;
       }
 
-      this.biasWeight = this.randomNumber;
+      // this.biasWeight = this.randomNumber;
     }    
 
     private get randomNumber() : number {
-      // return -1 + Math.random() * 2;
-      return 0;
+      return randomDouble(-10, 10);
     }
   }
   

@@ -1,18 +1,23 @@
 import { INeuron, Neuron } from "./Neuron";
 
 export interface ILayer {
-    neurons: INeuron[];
     outputs: number[];
+    size: number;
   
     activate(inputs: number[]): void;
     updateDeltas(gradientsForNeurons: number[]): void;
     updateWeights(learningRate: number): void;
     getGradientForInputNeuron(inputNeuronIndex: number) : number;
-    getGradientsForInputNeurons(inputNeuronsNumber: number) : number[];
+    getGradientsForPreviousLayer(inputNeuronsNumber: number) : number[];
   }
 
+/**
+ * Слой при прямом и обратном распространении принимает все значения 
+ * соседнего слоя и каждый нейрон выбирает нужные значения для себя.
+ */
+
 export class Layer implements ILayer {
-    public neurons: INeuron[] = [];
+    protected neurons: INeuron[] = [];
   
     constructor(
       neuronsNumber: number,
@@ -42,7 +47,7 @@ export class Layer implements ILayer {
     /**
      * Возвращает градиенты для нейронов, влияющих на данный слой в виде массива.
      */
-    public getGradientsForInputNeurons(inputNeuronsNumber: number): number[] {    
+    public getGradientsForPreviousLayer(inputNeuronsNumber: number): number[] {    
       const gradients: number[] = [];
 
       for (let i = 0; i < inputNeuronsNumber; i++) {
@@ -66,28 +71,8 @@ export class Layer implements ILayer {
     public get outputs(): number[] {
       return this.neurons.map(neuron => neuron.output);
     }
-  }
 
-  // todo: добавить HiddenLayer, в который перенести некоторые методы из Layer
-
-  export class InputLayer extends Layer {
-    constructor(neuronsNumber: number) {        
-      super(neuronsNumber, 1);
-    }
-  
-    public activate(networkInputs: number[]): void {
-      if (networkInputs.length !== this.neurons.length) {
-        throw new Error("Число входов в сеть не соответствует формату обучающих данных")
-      }
-      for (let i = 0; i < networkInputs.length; i++) {
-        const input = networkInputs[i];
-        
-        this.neurons[i].activate([input]);
-      }
+    public get size(): number {
+      return this.neurons.length;
     }
   }
-
-  export class OutputLayer extends Layer {
-   
-  }
-  
