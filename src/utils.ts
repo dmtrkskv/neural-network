@@ -49,7 +49,8 @@ export function testNetwork(
 
   printLearningResults(network, dataSet);
   console.warn(
-    `Тест успешно пройден за ${spentTime}ms с допустимой ошибкой ${allowableError}`
+    `Тест успешно завершен за ${spentTime}ms с допустимой ошибкой ${allowableError}` +
+    `\nКоличество проходов: ${testIterationsNumber}`
   );
 }
 

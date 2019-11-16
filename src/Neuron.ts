@@ -17,7 +17,7 @@ const squashList = {
   RELU(x: number, isDerivate?: boolean): number {
     return isDerivate ? (x > 0 ? 1 : 0) : x > 0 ? x : 0;
   },
-  TANH: function(x: number, isDerivate?: boolean) {
+  TANH(x: number, isDerivate?: boolean) {
     //@ts-ignore
     return isDerivate ? 1 - Math.pow(Math.tanh(x), 2) : Math.tanh(x);
   }
@@ -102,5 +102,5 @@ export class Neuron implements INeuron {
 
   public reinitializeWeights(): void {
     this.initializeWeights(this.weights.length);
-  }  
+  }
 }

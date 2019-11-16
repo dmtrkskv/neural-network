@@ -3,7 +3,7 @@ import { testNetwork } from "./utils";
 
 const network = new Network([2, 4, 1]);
 
-const dataSets = [
+const dataSet = [
   { inputs: [1, 1], outputs: [0] },
   { inputs: [0, 0], outputs: [0] },
   { inputs: [1, 0], outputs: [1] },
@@ -20,4 +20,4 @@ const testOptions = {
   iterationsNumber: 100
 };
 
-testNetwork(network, dataSets, learningOptions, testOptions);
+testNetwork(network, dataSet, learningOptions, testOptions);
