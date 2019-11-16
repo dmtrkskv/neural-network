@@ -5,12 +5,18 @@ export interface INeuron {
     updateDelta(gradient: number): void;
     updateWeights(learningRate: number): void;
     getGradientByInputIndex(index: number) : number;
+    reinitializeWeights(): void;
   }
 
  const squash = {
     SIGMOID(x: number, isDerivate?: boolean): number {
       const fx = 1 / (1 + Math.exp(-x));
       return isDerivate ? fx * (1 - fx) : fx;
+    },
+    RELU(x: number, isDerivate?: boolean) : number {
+      return isDerivate ?
+       (x > 0 ? 1 : 0) :
+       (x > 0 ? x : 0);
     }
   };
 
@@ -48,6 +54,8 @@ export interface INeuron {
       this.weights = this.weights.map((weight, index) => {
         return weight - learningRate * this.delta * this.savedInputs[index];
       });
+
+      this.biasWeight -= learningRate * this.delta;
     }
 
     public getGradientByInputIndex(index: number) : number {
@@ -57,6 +65,10 @@ export interface INeuron {
 
       return this.delta * this.weights[index];
     }  
+
+    public reinitializeWeights() : void {
+      this.initializeWeights(this.weights.length);
+    }
   
     private summarize(inputs: number[]): void {
       if (this.weights.length !== inputs.length) {
@@ -77,11 +89,11 @@ export interface INeuron {
         this.weights[i] = this.randomNumber;
       }
 
-      // this.biasWeight = this.randomNumber;
+      this.biasWeight = this.randomNumber;
     }    
 
     private get randomNumber() : number {
-      return randomDouble(-10, 10);
+      return randomDouble(-1, 1);
     }
   }
   

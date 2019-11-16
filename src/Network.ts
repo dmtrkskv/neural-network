@@ -4,9 +4,10 @@ export interface INetwork {
   outputs: number[];
   activate(inputs: number[]): void;
   train(dataSets: IDataSet[], learningRate: number, epochsNumber: number): void;
+  reinitializeWeights(): void;
 }
 
-interface IDataSet {
+export interface IDataSet {
     inputs: number[];
     outputs: number[];   
 }
@@ -56,6 +57,12 @@ export class Network implements INetwork {
     }
   }
 
+  public reinitializeWeights(): void {
+    this.layers.forEach(layer => {
+      layer.reinitializeWeights();
+    });
+  }
+
   public getLayer(index: number) : ILayer {
     return this.layers[index];
   }
@@ -83,7 +90,7 @@ export class Network implements INetwork {
 
     this.layers.forEach(layer => {
       layer.updateWeights(learningRate);
-    })
+    });
   }
 
   private get outputLayer() {

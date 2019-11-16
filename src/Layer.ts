@@ -9,6 +9,7 @@ export interface ILayer {
     updateWeights(learningRate: number): void;
     getGradientForInputNeuron(inputNeuronIndex: number) : number;
     getGradientsForPreviousLayer(inputNeuronsNumber: number) : number[];
+    reinitializeWeights(): void;
   }
 
 /**
@@ -74,5 +75,9 @@ export class Layer implements ILayer {
 
     public get size(): number {
       return this.neurons.length;
+    }
+
+    public reinitializeWeights() : void {
+      this.neurons.forEach(neuron => neuron.reinitializeWeights());
     }
   }
