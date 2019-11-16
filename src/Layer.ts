@@ -3,7 +3,6 @@ import { INeuron, Neuron } from "./Neuron";
 export interface ILayer {
     outputs: number[];
     size: number;
-  
     activate(inputs: number[]): void;
     updateDeltas(gradientsForNeurons: number[]): void;
     updateWeights(learningRate: number): void;
@@ -18,7 +17,7 @@ export interface ILayer {
  */
 
 export class Layer implements ILayer {
-    protected neurons: INeuron[] = [];
+    private neurons: INeuron[] = [];
   
     constructor(
       neuronsNumber: number,
@@ -27,6 +26,14 @@ export class Layer implements ILayer {
       for (let i = 0; i < neuronsNumber; i++) {
         this.neurons[i] = new Neuron(eachNeuronInputsNumber);
       }
+    }
+
+    public get outputs(): number[] {
+      return this.neurons.map(neuron => neuron.output);
+    }
+
+    public get size(): number {
+      return this.neurons.length;
     }
   
     public activate(previousLayerOutputs: number[]): void {
@@ -43,6 +50,10 @@ export class Layer implements ILayer {
 
     public updateWeights(learningRate: number): void {
       this.neurons.forEach(neuron => neuron.updateWeights(learningRate));
+    }
+
+    public reinitializeWeights() : void {
+      this.neurons.forEach(neuron => neuron.reinitializeWeights());
     }
    
     /**
@@ -67,17 +78,5 @@ export class Layer implements ILayer {
       return this.neurons.reduce((accum, neuron): number => {
         return accum + neuron.getGradientByInputIndex(inputNeuronIndex);
       }, 0);
-    }
-  
-    public get outputs(): number[] {
-      return this.neurons.map(neuron => neuron.output);
-    }
-
-    public get size(): number {
-      return this.neurons.length;
-    }
-
-    public reinitializeWeights() : void {
-      this.neurons.forEach(neuron => neuron.reinitializeWeights());
-    }
+    }       
   }
